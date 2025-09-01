@@ -1,0 +1,100 @@
+generator client {
+  output          = "./js-client"
+  provider        = "prisma-client-js"
+  previewFeatures = ["metrics"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_DIRECT")
+}
+
+model Admin {
+  notes      String
+  id         Int      @id @unique @default(autoincrement())
+  created_at DateTime @default(now())
+}
+
+model EventLog {
+  event_log_id       Int      @id @unique @default(autoincrement())
+  created_at         DateTime @default(now())
+  event              String
+  created_by_user_id Int
+  language           String?
+  location           String?
+  user_agent         String?
+  client_ip          String?
+  event_payload      String?
+  event_type         Int
+  created_by_user    User     @relation("EventLogRelation", fields: [created_by_user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Account {
+  account_id              Int             @id @unique @default(autoincrement())
+  created_at              DateTime        @default(now())
+  created_by_user_id      Int             @unique
+  display_name            String?
+  pricing_plan            Int
+  payment_status          Int
+  account_status          Int
+  account_expiration_date DateTime?
+  upcoming_payment_date   DateTime?
+  created_by_user         User            @relation("AccountRelation", fields: [created_by_user_id], references: [user_id], onUpdate: Cascade)
+  gallery_config          GalleryConfig?  @relation("GalleryConfigRelation")
+  gallery_record          GalleryRecord[] @relation("GalleryRecordRelation")
+}
+
+model GalleryConfig {
+  gallery_config_id     Int      @id @unique @default(autoincrement())
+  created_at            DateTime @default(now())
+  created_by_account_id Int      @unique
+  records_traits        String[]
+  records_color_traits  String[]
+  created_by_user       Account  @relation("GalleryConfigRelation", fields: [created_by_account_id], references: [account_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model GalleryRecord {
+  gallery_record_id     Int      @id @unique @default(autoincrement())
+  created_at            DateTime @default(now())
+  created_by_account_id Int
+  asset_url             String
+  asset_traits          String[]
+  asset_color_traits    String[]
+  created_by_account    Account  @relation("GalleryRecordRelation", fields: [created_by_account_id], references: [account_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Session {
+  session_id         Int       @id @unique @default(autoincrement())
+  created_at         DateTime  @default(now())
+  created_by_user_id Int
+  session_mode       Int
+  location           String?
+  language           String?
+  user_agent         String?
+  last_used          DateTime?
+  client_ip          String?
+  expires_at         DateTime
+  created_by_user    User      @relation("SessionsRelation", fields: [created_by_user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model DeletedUser {
+  user_id    Int      @id @unique @default(autoincrement())
+  created_at DateTime @default(now())
+  body       String
+}
+
+model User {
+  user_id      Int        @id @unique @default(autoincrement())
+  email        String     @unique
+  display_name String     @default("")
+  password     String
+  role         Int
+  created_at   DateTime   @default(now())
+  permissions  String[]   @default([])
+  is_active    Boolean    @default(true)
+  account      Account?   @relation("AccountRelation")
+  event_logs   EventLog[] @relation("EventLogRelation")
+  sessions     Session[]  @relation("SessionsRelation")
+}
