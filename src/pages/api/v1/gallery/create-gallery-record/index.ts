@@ -30,7 +30,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           })
           res.status(getValidatedStatusCode(201))
             .json(getInfoEventWithPayloadDTO<GALLERY_DTO_API_V1['CREATE_GALLERY_RECORD']['RESPONSE']>({
-              event: 'SUCCESS',
+              event: 'GALLERY_RECORD_CREATED',
               data: undefined
             }))
 
@@ -39,7 +39,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         } catch (e) {
           res.status(getValidatedStatusCode(500))
             .json(getGenericErrorWithDebuggerDTO(
-              'GENERAL_ERROR',
+              'CANNOT_CREATE_GALLERY_RECORD',
               e))
           reportIssue(
             'CREATE_GALLERY_RECORD',
