@@ -1,26 +1,31 @@
-import { getDateNowInString }                                                                                  from '@msalek/utils'
-import dayjs                                                                                                   from 'dayjs'
-import request_ip                                                                                              from 'request-ip'
-import { NextApiWithOptionalPayload }                                                                          from '../../../domain/http/http.types'
-import { fillUserMetadataWithLocation }                                                                        from '../../../domain/user/user.utils.api'
-import { logoutUserAndDeleteSession_IO }                                                                       from '../../../domain/user/userIO.operations.api'
-import { getNowInUTCString, nowDateIsSameOrAfterThanPassed }                                                   from '../../../READONLY-shared-kernel/application/date/dayjs-adapter/date.adapter'
-import { getInfoEventWithPayloadDTO }                                                                          from '../../../READONLY-shared-kernel/application/http/http.api'
-import { Session, SessionMode, SessionModeValue }                                                              from '../../../READONLY-shared-kernel/models/db_models'
-import { UserMetadata }                                                                                        from '../../../READONLY-shared-kernel/models/user/user.types'
-import { __debuggerGate }                                                                                      from '../../debugger/debugger.utils.api'
-import { reportIssue }                                                                                         from '../../debugger/errorHandler.possibilities.api'
-import { GetSessionAndTokenReturn }                                                                            from '../auth.types'
-import { checkRefreshTokenAndSessionNeed, getRefreshedSessionExpDateString, makeTokenPayloadFromDecodedToken } from '../auth.utils.api'
-import { SESSION_TOKEN_KEY_NAME, TokenPayload }                                                                from '../jwt/jwt.config'
-import { generateSessionTokenAndSet }                                                                          from '../jwt/jwt.operations.api'
-import { deleteSessionToken, getExtendedEncodedToken }                                                         from '../jwt/jwt.possibilities.api'
-import { ExtendedEncodedAndDecodedToken }                                                                      from '../jwt/jwt.types'
-import { getDecodedTokenFromPassedExtended }                                                                   from '../jwt/jwt.utils.api'
-import { getSession_IO }                                                                                       from './sessionIO.possibilities.api'
+import {getDateNowInString} from '@msalek/utils'
+import dayjs from 'dayjs'
+import request_ip from 'request-ip'
+import {NextApiWithOptionalPayload} from '../../../domain/http/http.types'
+import {fillUserMetadataWithLocation} from '../../../domain/user/user.utils.api'
+import {logoutUserAndDeleteSession_IO} from '../../../domain/user/userIO.operations.api'
+import {
+  getNowInUTCString,
+  nowDateIsSameOrAfterThanPassed
+} from '../../../READONLY-shared-kernel/application/date/dayjs-adapter/date.adapter'
+import {getInfoEventWithPayloadDTO} from '../../../READONLY-shared-kernel/application/http/http.api'
+import {Session, SessionMode, SessionModeValue} from '../../../READONLY-shared-kernel/models/db_models'
+import {UserMetadata} from '../../../READONLY-shared-kernel/models/user/user.types'
+import {__debuggerGate} from '../../debugger/debugger.utils.api'
+import {reportIssue} from '../../debugger/errorHandler.possibilities.api'
+import {GetSessionAndTokenReturn} from '../auth.types'
+import {
+  checkRefreshTokenAndSessionNeed,
+  getRefreshedSessionExpDateString,
+  makeTokenPayloadFromDecodedToken
+} from '../auth.utils.api'
+import {SESSION_TOKEN_KEY_NAME, TokenPayload} from '../jwt/jwt.config'
+import {generateSessionTokenAndSet} from '../jwt/jwt.operations.api'
+import {deleteSessionToken, getExtendedEncodedToken} from '../jwt/jwt.possibilities.api'
+import {ExtendedEncodedAndDecodedToken} from '../jwt/jwt.types'
+import {getDecodedTokenFromPassedExtended} from '../jwt/jwt.utils.api'
+import {getSession_IO} from './sessionIO.possibilities.api'
 import {DB_CLIENT} from "../../db/db.utils.api";
-
-
 
 
 export const isSessionExists_IO = async ({session_id}: Record<'session_id', Session['session_id'] | undefined>) => {
@@ -51,10 +56,10 @@ export const generateSessionAndSetToken_IO = async (
   props: NextApiWithOptionalPayload<Pick<TokenPayload, 'user_id'> & Partial<UserMetadata>>,
   session_mode: SessionMode = SessionModeValue.STANDARD): Promise<GetSessionAndTokenReturn> => {
   const {
-          payload,
-          req,
-          res
-        } = props
+    payload,
+    req,
+    res
+  } = props
   if (!payload) {
     reportIssue(
       'generateSessionAndSetToken NO PAYLOAD',
@@ -65,10 +70,10 @@ export const generateSessionAndSetToken_IO = async (
     throw undefined
   }
   const {
-          user_id,
-          user_agent,
-          language
-        } = payload
+    user_id,
+    user_agent,
+    language
+  } = payload
   const client_ip = payload?.client_ip ?? request_ip.getClientIp(req)
 
   try {
@@ -81,10 +86,10 @@ export const generateSessionAndSetToken_IO = async (
     const newSession = await DB_CLIENT.use.session.create({
       data: {
         session_mode,
-        client_ip      : userMetadata.client_ip,
-        location       : userMetadata.location,
-        user_agent     : userMetadata.user_agent,
-        language       : userMetadata.language,
+        client_ip: userMetadata.client_ip,
+        location: userMetadata.location,
+        user_agent: userMetadata.user_agent,
+        language: userMetadata.language,
         expires_at,
         created_by_user: {
           connect: {user_id}
@@ -93,12 +98,12 @@ export const generateSessionAndSetToken_IO = async (
     })
 
     const generateTokenPayload: TokenPayload = {
-      user_id   : user_id,
+      user_id: user_id,
       created_at: getDateNowInString({withTimestamp: true}),
-      client_ip : userMetadata.client_ip ?? null,
-      location  : userMetadata.location ?? null,
+      client_ip: userMetadata.client_ip ?? null,
+      location: userMetadata.location ?? null,
       user_agent: userMetadata.user_agent ?? null,
-      language  : userMetadata.language ?? null,
+      language: userMetadata.language ?? null,
       session_id: newSession.session_id,
       expires_at
     }
@@ -119,7 +124,7 @@ export const generateSessionAndSetToken_IO = async (
     return (
       {
         session: newSession as Session,
-        token  : generatedToken
+        token: generatedToken
       })
 
   } catch (error) {
@@ -129,7 +134,6 @@ export const generateSessionAndSetToken_IO = async (
     throw error
   }
 }
-
 
 
 export const isSessionExpired = (date?: Date): boolean | null => {
@@ -178,13 +182,13 @@ export const getAndRefreshCurrentSessionAndToken_IO = async (
       await logoutUserAndDeleteSession_IO({
         ...props,
         payload: {
-          user_id   : sessionFromFoundUser.created_by_user_id,
+          user_id: sessionFromFoundUser.created_by_user_id,
           session_id: sessionFromFoundUser.session_id
         }
       })
       throw getInfoEventWithPayloadDTO({
         event: 'SESSION_EXPIRED',
-        data : undefined
+        data: undefined
       })
     }
 
@@ -206,11 +210,11 @@ export const getAndRefreshCurrentSessionAndToken_IO = async (
       where: {
         session_id: sessionFromFoundUser.session_id
       },
-      data : {
-        last_used : getNowInUTCString(),
+      data: {
+        last_used: getNowInUTCString(),
         expires_at: ifTokenAndSessionShouldBeRefreshed
-                    ? expires_at
-                    : undefined
+          ? expires_at
+          : undefined
       }
     })
 
@@ -238,9 +242,9 @@ export const getAndRefreshCurrentSessionAndToken_IO = async (
     return (
       {
         session: fetchedSession as Session,
-        token  : ifTokenAndSessionShouldBeRefreshed
-                 ? newToken as ExtendedEncodedAndDecodedToken
-                 : fetchedToken
+        token: ifTokenAndSessionShouldBeRefreshed
+          ? newToken as ExtendedEncodedAndDecodedToken
+          : fetchedToken
       })
 
   } catch (error: any | undefined) {

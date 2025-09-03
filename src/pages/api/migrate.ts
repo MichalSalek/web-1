@@ -1,6 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 import {re_set_active_accounts} from "../../prisma-script-migrations/re-set-active-accounts";
-import {DB_CLIENT} from "../../application/db/db.utils.api";
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 

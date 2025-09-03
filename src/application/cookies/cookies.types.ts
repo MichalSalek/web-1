@@ -1,6 +1,4 @@
-import { SerializeOptions } from 'cookie'
-
-
+import {SerializeOptions} from 'cookie'
 
 
 export type CookiePayload<T> = {

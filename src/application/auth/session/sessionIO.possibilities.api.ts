@@ -1,11 +1,9 @@
-import { NextApiWithOptionalPayload }      from '../../../domain/http/http.types'
-import { Session, SessionModeValue, User } from '../../../READONLY-shared-kernel/models/db_models'
-import { CurrentUser }                     from '../../../READONLY-shared-kernel/models/user/user.types'
-import { __debuggerGate }                  from '../../debugger/debugger.utils.api'
-import { reportIssue }                     from '../../debugger/errorHandler.possibilities.api'
+import {NextApiWithOptionalPayload} from '../../../domain/http/http.types'
+import {Session, SessionModeValue, User} from '../../../READONLY-shared-kernel/models/db_models'
+import {CurrentUser} from '../../../READONLY-shared-kernel/models/user/user.types'
+import {__debuggerGate} from '../../debugger/debugger.utils.api'
+import {reportIssue} from '../../debugger/errorHandler.possibilities.api'
 import {DB_CLIENT} from "../../db/db.utils.api";
-
-
 
 
 export const getSession_IO = async ({session_id}: Record<'session_id', Session['session_id']>): Promise<Session | null> => {
@@ -18,7 +16,6 @@ export const getSession_IO = async ({session_id}: Record<'session_id', Session['
 }
 
 
-
 export const getAllSessions_IO = async (): Promise<Session[]> => {
   return (
     await DB_CLIENT.use.session.findMany({
@@ -29,22 +26,20 @@ export const getAllSessions_IO = async (): Promise<Session[]> => {
 }
 
 
-
 export const getAllSessionsByUser_IO = async (id: CurrentUser['user_id'], sessionModeStandardOnly = true): Promise<Session[]> => {
   return (
     await DB_CLIENT.use.session.findMany({
-      where  : {
+      where: {
         created_by_user_id: id,
-        session_mode      : sessionModeStandardOnly
-                            ? SessionModeValue.STANDARD
-                            : undefined
+        session_mode: sessionModeStandardOnly
+          ? SessionModeValue.STANDARD
+          : undefined
       },
       orderBy: {
         last_used: 'asc'
       }
     }) as Session[])
 }
-
 
 
 export const deleteSession_IO = async (
@@ -78,7 +73,6 @@ export const deleteSession_IO = async (
     throw error
   }
 }
-
 
 
 export const deleteAllSessions_IO = async (props: NextApiWithOptionalPayload<User['user_id']>): Promise<boolean> => {

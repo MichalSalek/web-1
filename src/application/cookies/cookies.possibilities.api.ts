@@ -1,20 +1,17 @@
-import { deleteCookie, getCookie, setCookie } from 'cookies-next/server'
-import { NextApiWithOptionalPayload }         from '../../domain/http/http.types'
-import { __debuggerGate }                     from '../debugger/debugger.utils.api'
-import { reportIssue }                        from '../debugger/errorHandler.possibilities.api'
-import { SET_COOKIE_OPTIONS }                 from './cookies.config'
-import { CookiePayload }                      from './cookies.types'
-
-
+import {deleteCookie, getCookie, setCookie} from 'cookies-next/server'
+import {NextApiWithOptionalPayload} from '../../domain/http/http.types'
+import {__debuggerGate} from '../debugger/debugger.utils.api'
+import {reportIssue} from '../debugger/errorHandler.possibilities.api'
+import {SET_COOKIE_OPTIONS} from './cookies.config'
+import {CookiePayload} from './cookies.types'
 
 
 export const setClientCookie = async <T>(props: NextApiWithOptionalPayload<CookiePayload<T>>) => {
   const {
-          req,
-          res,
-          payload
-        } = props
-
+    req,
+    res,
+    payload
+  } = props
 
 
   if (!payload) {
@@ -35,14 +32,12 @@ export const setClientCookie = async <T>(props: NextApiWithOptionalPayload<Cooki
 }
 
 
-
-
 export const deleteClientCookie = async (props: NextApiWithOptionalPayload<string>) => {
   const {
-          req,
-          res,
-          payload
-        } = props
+    req,
+    res,
+    payload
+  } = props
 
   if (!payload) {
     return void undefined
@@ -57,13 +52,12 @@ export const deleteClientCookie = async (props: NextApiWithOptionalPayload<strin
 }
 
 
-
 export const getClientCookie = async (props: NextApiWithOptionalPayload<string>) => {
   const {
-          req,
-          res,
-          payload
-        } = props
+    req,
+    res,
+    payload
+  } = props
 
   if (!payload) {
     return null

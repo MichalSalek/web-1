@@ -1,14 +1,12 @@
 // https://www.npmjs.com/package/jsonwebtoken
 //
-import * as jwt           from 'jsonwebtoken'
-import { VerifyErrors }   from 'jsonwebtoken'
-import { __debuggerGate } from '../../../debugger/debugger.utils.api'
-import { reportIssue }    from '../../../debugger/errorHandler.possibilities.api'
-import { TokenPayload }   from '../jwt.config'
-import { Token }          from '../jwt.types'
-import { getFullSalt }    from '../jwt.utils.api'
-
-
+import * as jwt from 'jsonwebtoken'
+import {VerifyErrors} from 'jsonwebtoken'
+import {__debuggerGate} from '../../../debugger/debugger.utils.api'
+import {reportIssue} from '../../../debugger/errorHandler.possibilities.api'
+import {TokenPayload} from '../jwt.config'
+import {Token} from '../jwt.types'
+import {getFullSalt} from '../jwt.utils.api'
 
 
 export const JWT_SIGN = (payload: TokenPayload, salt: string): Token | undefined => {
@@ -32,7 +30,6 @@ export const JWT_SIGN = (payload: TokenPayload, salt: string): Token | undefined
     throw error
   }
 }
-
 
 
 export const JWT_VERIFY = (encodedToken: Token, salt: string): TokenPayload | undefined => {

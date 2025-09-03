@@ -1,10 +1,8 @@
-import { ValueOf }                    from '@msalek/utils'
-import { NextApiWithOptionalPayload } from '../../domain/http/http.types'
-import { CUSTOM_HEADERS }             from '../../READONLY-shared-kernel/domain/http/http.config'
-import { __debuggerGate }             from '../debugger/debugger.utils.api'
-import { reportIssue }                from '../debugger/errorHandler.possibilities.api'
-
-
+import {ValueOf} from '@msalek/utils'
+import {NextApiWithOptionalPayload} from '../../domain/http/http.types'
+import {CUSTOM_HEADERS} from '../../READONLY-shared-kernel/domain/http/http.config'
+import {__debuggerGate} from '../debugger/debugger.utils.api'
+import {reportIssue} from '../debugger/errorHandler.possibilities.api'
 
 
 export const setClientHeader = <T>(props: NextApiWithOptionalPayload<{
@@ -12,9 +10,9 @@ export const setClientHeader = <T>(props: NextApiWithOptionalPayload<{
   value: string
 }>) => {
   const {
-          res,
-          payload
-        } = props
+    res,
+    payload
+  } = props
 
   if (!payload) {
     reportIssue(
@@ -39,12 +37,11 @@ export const setClientHeader = <T>(props: NextApiWithOptionalPayload<{
 }
 
 
-
 export const deleteClientHeader = async (props: NextApiWithOptionalPayload<ValueOf<typeof CUSTOM_HEADERS>>) => {
   const {
-          res,
-          payload
-        } = props
+    res,
+    payload
+  } = props
 
   if (!payload) {
     reportIssue(
@@ -58,10 +55,10 @@ export const deleteClientHeader = async (props: NextApiWithOptionalPayload<Value
 
 export const getClientHeader = async (props: NextApiWithOptionalPayload<string>) => {
   const {
-          req,
-          res,
-          payload
-        } = props
+    req,
+    res,
+    payload
+  } = props
 
   __debuggerGate(() => console.log(
     'getClientHeader payload: ',

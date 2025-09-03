@@ -1,10 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import axios, { AxiosResponse }                 from 'axios'
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { reportIssue }                          from '../../../../../application/debugger/errorHandler.possibilities.api'
-import { getValidatedStatusCode }               from '../../../../../READONLY-shared-kernel/application/http/http.api'
-
-
+import axios, {AxiosResponse} from 'axios'
+import type {NextApiRequest, NextApiResponse} from 'next'
+import {reportIssue} from '../../../../../application/debugger/errorHandler.possibilities.api'
+import {getValidatedStatusCode} from '../../../../../READONLY-shared-kernel/application/http/http.api'
 
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -14,13 +12,13 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (url) {
       const response: AxiosResponse = await axios(url)
       res.status(getValidatedStatusCode(200))
-         .json(response.data)
+        .json(response.data)
     } else {
       res.status(getValidatedStatusCode(400))
-         .json({
-           info: 'No URL provided.',
-           payload
-         })
+        .json({
+          info: 'No URL provided.',
+          payload
+        })
     }
 
   } catch (e) {
@@ -28,7 +26,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       'get-current-access post endpoint',
       e)
     res.status(getValidatedStatusCode(500))
-       .end()
+      .end()
   }
 }
 

@@ -1,6 +1,4 @@
-import { TokenPayload } from './jwt.config'
-
-
+import {TokenPayload} from './jwt.config'
 
 
 export type Token = string

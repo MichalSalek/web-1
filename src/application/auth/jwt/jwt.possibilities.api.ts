@@ -1,14 +1,12 @@
-import { NextApiWithOptionalPayload }               from '../../../domain/http/http.types'
-import { __debuggerGate }                           from '../../debugger/debugger.utils.api'
-import { reportIssue }                              from '../../debugger/errorHandler.possibilities.api'
-import { getClientHeader, setClientHeader }         from '../../headers/headers.possibilities.api'
-import { JWT_SIGN }                                 from './adapters/jsonwebtoken.adapter'
-import { SESSION_TOKEN_KEY_NAME, TokenPayload }     from './jwt.config'
-import { ExtendedToken, Token }                     from './jwt.types'
-import { extendEncodedToken, validateTokenPayload } from './jwt.utils.api'
+import {NextApiWithOptionalPayload} from '../../../domain/http/http.types'
+import {__debuggerGate} from '../../debugger/debugger.utils.api'
+import {reportIssue} from '../../debugger/errorHandler.possibilities.api'
+import {getClientHeader, setClientHeader} from '../../headers/headers.possibilities.api'
+import {JWT_SIGN} from './adapters/jsonwebtoken.adapter'
+import {SESSION_TOKEN_KEY_NAME, TokenPayload} from './jwt.config'
+import {ExtendedToken, Token} from './jwt.types'
+import {extendEncodedToken, validateTokenPayload} from './jwt.utils.api'
 import {CLEAR_THIS_HEADER_COMMAND_VALUE} from "../../../READONLY-shared-kernel/application/http/http.config";
-
-
 
 
 export const createSessionToken = (payload: TokenPayload): ExtendedToken | undefined => {
@@ -41,13 +39,12 @@ export const createSessionToken = (payload: TokenPayload): ExtendedToken | undef
 }
 
 
-
 export const deleteSessionToken = async (props: NextApiWithOptionalPayload) => {
   try {
     setClientHeader({
       ...props,
       payload: {
-        name : SESSION_TOKEN_KEY_NAME,
+        name: SESSION_TOKEN_KEY_NAME,
         value: CLEAR_THIS_HEADER_COMMAND_VALUE
       }
     })

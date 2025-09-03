@@ -1,13 +1,14 @@
-import type { NextApiRequest, NextApiResponse }               from 'next'
-import { getAndRefreshCurrentSessionAndToken_IO }             from '../../../../../application/auth/session/sessionIO.operations.api'
-import { reportIssue }                                        from '../../../../../application/debugger/errorHandler.possibilities.api'
-import { HTTPRequestHandlerMiddleware }                       from '../../../../../domain/http/http.middleware'
-import { getGenericErrorWithDebuggerDTO }                     from '../../../../../domain/http/http.utils.api'
-import { logoutUser_IO }                                      from '../../../../../domain/user/userIO.operations.api'
-import { getInfoEventWithPayloadDTO, getValidatedStatusCode } from '../../../../../READONLY-shared-kernel/application/http/http.api'
-import { SESSION_DTO_API_V1 }                                 from '../../../../../READONLY-shared-kernel/models/session/session.dto'
-
-
+import type {NextApiRequest, NextApiResponse} from 'next'
+import {getAndRefreshCurrentSessionAndToken_IO} from '../../../../../application/auth/session/sessionIO.operations.api'
+import {reportIssue} from '../../../../../application/debugger/errorHandler.possibilities.api'
+import {HTTPRequestHandlerMiddleware} from '../../../../../domain/http/http.middleware'
+import {getGenericErrorWithDebuggerDTO} from '../../../../../domain/http/http.utils.api'
+import {logoutUser_IO} from '../../../../../domain/user/userIO.operations.api'
+import {
+  getInfoEventWithPayloadDTO,
+  getValidatedStatusCode
+} from '../../../../../READONLY-shared-kernel/application/http/http.api'
+import {SESSION_DTO_API_V1} from '../../../../../READONLY-shared-kernel/models/session/session.dto'
 
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -15,10 +16,10 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     req,
     res,
     {
-      eventName         : 'SESSION_REFRESH',
-      allowedHTTPMethod : 'get',
+      eventName: 'SESSION_REFRESH',
+      allowedHTTPMethod: 'get',
       validationFunction: undefined,
-      businessLogic     : async (body, {sessionAndToken}) => {
+      businessLogic: async (body, {sessionAndToken}) => {
         try {
 
           if (sessionAndToken) {
@@ -31,19 +32,19 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             if (sessionAndTokenAfterRefresh) {
               res.status(getValidatedStatusCode(200))
-                 .json(getInfoEventWithPayloadDTO<SESSION_DTO_API_V1['REFRESH']['RESPONSE']>({
-                   event: 'SESSION_REFRESHED',
-                   data : sessionAndTokenAfterRefresh.session
-                 }))
+                .json(getInfoEventWithPayloadDTO<SESSION_DTO_API_V1['REFRESH']['RESPONSE']>({
+                  event: 'SESSION_REFRESHED',
+                  data: sessionAndTokenAfterRefresh.session
+                }))
               return void undefined
             }
           }
 
           res.status(getValidatedStatusCode(500))
-             .json(getInfoEventWithPayloadDTO({
-               event: 'GENERAL_ERROR',
-               data : undefined
-             }))
+            .json(getInfoEventWithPayloadDTO({
+              event: 'GENERAL_ERROR',
+              data: undefined
+            }))
           return void undefined
 
 
@@ -53,9 +54,9 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             res
           })
           res.status(getValidatedStatusCode(500))
-             .json(getGenericErrorWithDebuggerDTO(
-               'GENERAL_ERROR',
-               e))
+            .json(getGenericErrorWithDebuggerDTO(
+              'GENERAL_ERROR',
+              e))
           reportIssue(
             'SESSION_REFRESH',
             e)

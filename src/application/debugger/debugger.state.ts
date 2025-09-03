@@ -4,6 +4,6 @@ type DebuggerState = {
 }
 
 export const debuggerStates: DebuggerState = {
-  isEnabledDebugMode      : false,
+  isEnabledDebugMode: false,
   isEnabledDBLeaksDebugger: false
 }

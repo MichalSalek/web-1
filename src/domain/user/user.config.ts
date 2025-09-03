@@ -4,7 +4,7 @@ export const userRelationsEnabler = {
 }
 
 export const userRelationsExtendedEnabler = {
-  account : true,
+  account: true,
   sessions: true
 
 }

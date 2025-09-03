@@ -1,11 +1,14 @@
-import { handlePromiseWithTimeout }                                                   from '@msalek/utils'
-import { GetSessionAndTokenReturn }                                                   from '../../application/auth/auth.types'
-import { reportIssue }                                                                from '../../application/debugger/errorHandler.possibilities.api'
-import { getCountryAndCity }                                                          from '../../application/geolocalization/geo.possibilities.api'
-import { User, UserNoSensitive }                                                      from '../../READONLY-shared-kernel/models/db_models'
-import { CurrentUser, UserMetadata, UserNoSensitiveWithRelations, UserWithRelations } from '../../READONLY-shared-kernel/models/user/user.types'
-
-
+import {handlePromiseWithTimeout} from '@msalek/utils'
+import {GetSessionAndTokenReturn} from '../../application/auth/auth.types'
+import {reportIssue} from '../../application/debugger/errorHandler.possibilities.api'
+import {getCountryAndCity} from '../../application/geolocalization/geo.possibilities.api'
+import {User, UserNoSensitive} from '../../READONLY-shared-kernel/models/db_models'
+import {
+  CurrentUser,
+  UserMetadata,
+  UserNoSensitiveWithRelations,
+  UserWithRelations
+} from '../../READONLY-shared-kernel/models/user/user.types'
 
 
 export const convertUserToUserNoSensitive = (user: UserWithRelations | UserNoSensitiveWithRelations | User | null): UserNoSensitiveWithRelations | UserNoSensitive | null => {
@@ -17,21 +20,19 @@ export const convertUserToUserNoSensitive = (user: UserWithRelations | UserNoSen
     return user
   }
   const {
-          password,
-          ...restWithoutSensitive
-        } = user as User
+    password,
+    ...restWithoutSensitive
+  } = user as User
 
   return restWithoutSensitive
 }
 
 
-
-
 export const makeCurrentUser = (user: UserNoSensitiveWithRelations, sessionAndToken: GetSessionAndTokenReturn): CurrentUser => {
   const {
-          permissions,
-          ...cleanedUser
-        } = user
+    permissions,
+    ...cleanedUser
+  } = user
 
   return (
     {
@@ -39,8 +40,6 @@ export const makeCurrentUser = (user: UserNoSensitiveWithRelations, sessionAndTo
       session: sessionAndToken.session
     })
 }
-
-
 
 
 export const equalPasswords = (p1: User['password'], p2: User['password']): boolean => {
@@ -59,15 +58,13 @@ export const areBothUsersFromTheSameAccount = (
 }
 
 
-
-
 export const fillUserMetadataWithLocation = async (body: Partial<UserMetadata> | unknown): Promise<UserMetadata> => {
   const maybeUserMetadata = body as UserMetadata
   const userMetadata: UserMetadata = {
     user_agent: maybeUserMetadata.user_agent,
-    language  : maybeUserMetadata.language,
-    client_ip : maybeUserMetadata.client_ip,
-    location  : undefined
+    language: maybeUserMetadata.language,
+    client_ip: maybeUserMetadata.client_ip,
+    location: undefined
   }
 
   try {

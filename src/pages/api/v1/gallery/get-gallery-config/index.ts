@@ -25,7 +25,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(getValidatedStatusCode(404))
               .json(getInfoEventWithPayloadDTO({
                 event: 'NOT_FOUND',
-                data : undefined
+                data: undefined
               }))
             return void undefined
           }

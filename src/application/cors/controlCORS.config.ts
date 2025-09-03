@@ -1,15 +1,13 @@
-import { CUSTOM_HEADERS } from '../../READONLY-shared-kernel/domain/http/http.config'
-import { ENV_VARS }       from '../environment/environment.utils.api'
+import {CUSTOM_HEADERS} from '../../READONLY-shared-kernel/domain/http/http.config'
+import {ENV_VARS} from '../environment/environment.utils.api'
 
 
-
-
-export const CORS_ALLOWED_ORIGINS = [ `${ENV_VARS.HTTP_PROTOCOL}${ENV_VARS.HTTP_MAIN_APP_HOST}:${ENV_VARS.PORT_MAIN}`,
-                                      `${ENV_VARS.HTTP_PROTOCOL}${ENV_VARS.HTTP_MAIN_APP_HOST}` ]
+export const CORS_ALLOWED_ORIGINS = [`${ENV_VARS.HTTP_PROTOCOL}${ENV_VARS.HTTP_MAIN_APP_HOST}:${ENV_VARS.PORT_MAIN}`,
+  `${ENV_VARS.HTTP_PROTOCOL}${ENV_VARS.HTTP_MAIN_APP_HOST}`]
 
 export const CORS_HEADERS = Object.freeze({
-  'Access-Control-Allow-Methods'    : 'GET, POST',
-  'Access-Control-Allow-Headers'    : ''
+  'Access-Control-Allow-Methods': 'GET, POST',
+  'Access-Control-Allow-Headers': ''
     + 'Content-Type, '
     + 'Pathname, '
     + 'Cache-Control, '
@@ -18,9 +16,9 @@ export const CORS_HEADERS = Object.freeze({
     + 'Refferer, '
     + 'Upgrade-Insecure-Requests, '
     + Object.values(CUSTOM_HEADERS)
-            .join(', '),
-  'Access-Control-Expose-Headers'   : Object.values(CUSTOM_HEADERS)
-                                            .join(', '),
+      .join(', '),
+  'Access-Control-Expose-Headers': Object.values(CUSTOM_HEADERS)
+    .join(', '),
   'Access-Control-Allow-Credentials': 'true'
 })
 

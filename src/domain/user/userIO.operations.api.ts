@@ -1,24 +1,37 @@
-import { removeDuplicates }                                                              from '@msalek/utils'
-import { GetSessionAndTokenReturn }                                                      from '../../application/auth/auth.types'
-import { TokenPayload }                                                                  from '../../application/auth/jwt/jwt.config'
-import { deleteSessionToken }                                                            from '../../application/auth/jwt/jwt.possibilities.api'
-import { generateSessionAndSetToken_IO, getAndRefreshCurrentSessionAndToken_IO }         from '../../application/auth/session/sessionIO.operations.api'
-import { deleteSession_IO }                                                              from '../../application/auth/session/sessionIO.possibilities.api'
-import { __debuggerGate }                                                                from '../../application/debugger/debugger.utils.api'
-import { reportIssue }                                                                   from '../../application/debugger/errorHandler.possibilities.api'
-import { PermissionsCollection }                                                         from '../../READONLY-shared-kernel/domain/permissions/permissions.types'
-import { Account, AccountStatus, AccountStatusValue, PaymentStatusValue, Session, User } from '../../READONLY-shared-kernel/models/db_models'
-import { CurrentUser, UserMetadata, UserNoSensitiveWithRelations, UserWithRelations }    from '../../READONLY-shared-kernel/models/user/user.types'
-import { PERMISSIONS_POLICY }                                                            from '../../READONLY-shared-kernel/policies/permissions.policy'
-import { USER_POLICY }                                                                   from '../../READONLY-shared-kernel/policies/user.policy'
-import { NextApiWithOptionalPayload }                                                    from '../http/http.types'
-import { userRelationsEnabler }                                                          from './user.config'
-import { convertUserToUserNoSensitive, makeCurrentUser }                                 from './user.utils.api'
-import { getUser_IO }                                                                    from './userIO.possibilities.api'
+import {removeDuplicates} from '@msalek/utils'
+import {GetSessionAndTokenReturn} from '../../application/auth/auth.types'
+import {TokenPayload} from '../../application/auth/jwt/jwt.config'
+import {deleteSessionToken} from '../../application/auth/jwt/jwt.possibilities.api'
+import {
+  generateSessionAndSetToken_IO,
+  getAndRefreshCurrentSessionAndToken_IO
+} from '../../application/auth/session/sessionIO.operations.api'
+import {deleteSession_IO} from '../../application/auth/session/sessionIO.possibilities.api'
+import {__debuggerGate} from '../../application/debugger/debugger.utils.api'
+import {reportIssue} from '../../application/debugger/errorHandler.possibilities.api'
+import {PermissionsCollection} from '../../READONLY-shared-kernel/domain/permissions/permissions.types'
+import {
+  Account,
+  AccountStatus,
+  AccountStatusValue,
+  PaymentStatusValue,
+  Session,
+  User
+} from '../../READONLY-shared-kernel/models/db_models'
+import {
+  CurrentUser,
+  UserMetadata,
+  UserNoSensitiveWithRelations,
+  UserWithRelations
+} from '../../READONLY-shared-kernel/models/user/user.types'
+import {PERMISSIONS_POLICY} from '../../READONLY-shared-kernel/policies/permissions.policy'
+import {USER_POLICY} from '../../READONLY-shared-kernel/policies/user.policy'
+import {NextApiWithOptionalPayload} from '../http/http.types'
+import {userRelationsEnabler} from './user.config'
+import {convertUserToUserNoSensitive, makeCurrentUser} from './user.utils.api'
+import {getUser_IO} from './userIO.possibilities.api'
 import {DB_CLIENT} from "../../application/db/db.utils.api";
 import {activeAccountStates} from "../../READONLY-shared-kernel/domain/user-and-account/user_and_account.config";
-
-
 
 
 export const loginUser_IO = async (props: NextApiWithOptionalPayload<Pick<TokenPayload, 'user_id'> & Partial<UserMetadata>>): Promise<GetSessionAndTokenReturn> => {
@@ -38,7 +51,6 @@ export const logoutUser_IO = async (props: NextApiWithOptionalPayload) => {
     throw error
   }
 }
-
 
 
 export const logoutUserAndDeleteSession_IO = async (props: NextApiWithOptionalPayload<{
@@ -62,7 +74,6 @@ export const logoutUserAndDeleteSession_IO = async (props: NextApiWithOptionalPa
 }
 
 
-
 export type GetCurrentUserOutputOptimistic = {
   user: UserWithRelations
   currentUser: CurrentUser
@@ -74,8 +85,8 @@ export type GetCurrentUserOutput = {
   sessionAndToken: GetCurrentUserOutputOptimistic['sessionAndToken'] | undefined
 }
 export const getCurrentUserUndefinedReturnObject: GetCurrentUserOutput = {
-  user           : undefined,
-  currentUser    : undefined,
+  user: undefined,
+  currentUser: undefined,
   sessionAndToken: undefined
 }
 export const getCurrentUser_IO = async (props: NextApiWithOptionalPayload): Promise<GetCurrentUserOutput> => {
@@ -118,7 +129,6 @@ export const getCurrentUser_IO = async (props: NextApiWithOptionalPayload): Prom
 }
 
 
-
 export const disableUser_IO = async (passedUser: UserNoSensitiveWithRelations) => {
   if (!passedUser) {
     reportIssue(
@@ -128,15 +138,15 @@ export const disableUser_IO = async (passedUser: UserNoSensitiveWithRelations) =
   }
   try {
     const user = await DB_CLIENT.use.user.update({
-      where  : {user_id: passedUser.user_id},
-      data   : {
+      where: {user_id: passedUser.user_id},
+      data: {
         is_active: false,
-        account  : {
+        account: {
           update: {
             account_status: AccountStatusValue.NOT_ACTIVE
           }
         },
-        sessions : {
+        sessions: {
           deleteMany: {created_by_user_id: passedUser.user_id}
         }
       },
@@ -153,8 +163,6 @@ export const disableUser_IO = async (passedUser: UserNoSensitiveWithRelations) =
 }
 
 
-
-
 export const enableUser_IO = async (passedUser: UserNoSensitiveWithRelations) => {
   if (!passedUser) {
     reportIssue(
@@ -165,14 +173,14 @@ export const enableUser_IO = async (passedUser: UserNoSensitiveWithRelations) =>
 
   try {
     const user = await DB_CLIENT.use.user.update({
-      where  : {user_id: passedUser.user_id},
-      data   : {
+      where: {user_id: passedUser.user_id},
+      data: {
         is_active: true,
-        account  : {
+        account: {
           update: {
             account_status: USER_POLICY.utils.CAN_USER_HAVE_ACTIVE_ACCOUNT(passedUser)
-                            ? AccountStatusValue.ACTIVE
-                            : undefined
+              ? AccountStatusValue.ACTIVE
+              : undefined
           }
         }
       },
@@ -189,7 +197,6 @@ export const enableUser_IO = async (passedUser: UserNoSensitiveWithRelations) =>
 }
 
 
-
 export const setAccountStateByUser_IO = async (
   passedUser: UserNoSensitiveWithRelations,
   account_status: AccountStatus): Promise<UserNoSensitiveWithRelations | null> => {
@@ -198,12 +205,12 @@ export const setAccountStateByUser_IO = async (
 
   try {
     const outputUserWithRelations = await DB_CLIENT.use.user.update({
-      where  : {user_id: passedUser.user_id},
-      data   : {
+      where: {user_id: passedUser.user_id},
+      data: {
         permissions: isAccountActive
-                     ? PERMISSIONS_POLICY.runtimePermissionsSetsForEvents.ACTIVE_ACCOUNT
-                     : [],
-        account    : {
+          ? PERMISSIONS_POLICY.runtimePermissionsSetsForEvents.ACTIVE_ACCOUNT
+          : [],
+        account: {
           update: {
             account_status
           }
@@ -225,21 +232,19 @@ export const setAccountStateByUser_IO = async (
 }
 
 
-
-
 export const updateUserPermissions_IO = async ({
-  userPartial,
-  passedPermissions,
-  action
-}: {
+                                                 userPartial,
+                                                 passedPermissions,
+                                                 action
+                                               }: {
   userPartial: Pick<User, 'user_id' | 'permissions'>
   passedPermissions: PermissionsCollection
   action: 'grant' | 'remove'
 }): Promise<UserNoSensitiveWithRelations | null> => {
   const {
-          user_id,
-          permissions
-        } = userPartial
+    user_id,
+    permissions
+  } = userPartial
 
   __debuggerGate(() => {
     console.log(
@@ -258,8 +263,8 @@ export const updateUserPermissions_IO = async ({
   if (action === 'grant') {
 
     updatedPermissions =
-      removeDuplicates<PermissionsCollection[0]>([ ...permissions,
-                                                   ...passedPermissions ])
+      removeDuplicates<PermissionsCollection[0]>([...permissions,
+        ...passedPermissions])
 
   } else if (action === 'remove') {
 
@@ -274,8 +279,8 @@ export const updateUserPermissions_IO = async ({
 
   try {
     const outputUserWithRelations = await DB_CLIENT.use.user.update({
-      where  : {user_id},
-      data   : {
+      where: {user_id},
+      data: {
         permissions: updatedPermissions
       },
       include: userRelationsEnabler
@@ -294,22 +299,20 @@ export const updateUserPermissions_IO = async ({
 }
 
 
-
-
 export const setPaymentStateByUser_IO = async (
   user: UserNoSensitiveWithRelations,
   pricing_plan: Account['pricing_plan']): Promise<UserNoSensitiveWithRelations> => {
   try {
     const outputUserWithRelations = await DB_CLIENT.use.user.update({
-      where  : {
+      where: {
         user_id: user.user_id
       },
-      data   : {
+      data: {
         account: {
           update: {
-            payment_status         : PaymentStatusValue.PAID,
+            payment_status: PaymentStatusValue.PAID,
             account_expiration_date: null,
-            upcoming_payment_date  : null, //@TODO
+            upcoming_payment_date: null, //@TODO
             pricing_plan
           }
         }
@@ -320,9 +323,9 @@ export const setPaymentStateByUser_IO = async (
       throw undefined
     }
     const {
-            password,
-            ...userNoSensitiveWithRelations
-          } = outputUserWithRelations as UserWithRelations
+      password,
+      ...userNoSensitiveWithRelations
+    } = outputUserWithRelations as UserWithRelations
     return userNoSensitiveWithRelations
   } catch (error) {
     reportIssue(

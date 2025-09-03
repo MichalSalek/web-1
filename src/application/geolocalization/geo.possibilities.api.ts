@@ -1,7 +1,5 @@
-import geoip            from 'fast-geoip'
-import { UserMetadata } from '../../READONLY-shared-kernel/models/user/user.types'
-
-
+import geoip from 'fast-geoip'
+import {UserMetadata} from '../../READONLY-shared-kernel/models/user/user.types'
 
 
 export const getCountryAndCity = async (props: Pick<UserMetadata, 'client_ip'>): Promise<string | null> => {

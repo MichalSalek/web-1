@@ -1,11 +1,9 @@
-import { NextApiRequest }             from 'next'
-import { debuggerStates }             from '../../application/debugger/debugger.state'
-import { getInfoEventWithPayloadDTO } from '../../READONLY-shared-kernel/application/http/http.api'
-import { EVENT_INFO_TYPE }            from '../../READONLY-shared-kernel/domain/commands-and-queries/cqrs.types'
-import { CUSTOM_HEADERS }             from '../../READONLY-shared-kernel/domain/http/http.config'
-import { UserMetadata }               from '../../READONLY-shared-kernel/models/user/user.types'
-
-
+import {NextApiRequest} from 'next'
+import {debuggerStates} from '../../application/debugger/debugger.state'
+import {getInfoEventWithPayloadDTO} from '../../READONLY-shared-kernel/application/http/http.api'
+import {EVENT_INFO_TYPE} from '../../READONLY-shared-kernel/domain/commands-and-queries/cqrs.types'
+import {CUSTOM_HEADERS} from '../../READONLY-shared-kernel/domain/http/http.config'
+import {UserMetadata} from '../../READONLY-shared-kernel/models/user/user.types'
 
 
 export const getKnownRequestHeaders = (req: NextApiRequest): {
@@ -21,15 +19,15 @@ export const getKnownRequestHeaders = (req: NextApiRequest): {
 
   const parserUserMetadata = JSON.parse((
     usermetadata
-    ? usermetadata
-    : '{}') as string)
+      ? usermetadata
+      : '{}') as string)
 
   const {
-          client_ip,
-          location,
-          user_agent,
-          language
-        } = parserUserMetadata as UserMetadata
+    client_ip,
+    location,
+    user_agent,
+    language
+  } = parserUserMetadata as UserMetadata
 
   return {
     userMetadata: {
@@ -51,7 +49,7 @@ export const getGenericErrorWithDebuggerDTO = (event: EVENT_INFO_TYPE, error: un
         data: undefined
       }),
       throw: debuggerStates.isEnabledDebugMode
-             ? error
-             : undefined
+        ? error
+        : undefined
     })
 }

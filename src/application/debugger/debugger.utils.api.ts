@@ -1,6 +1,4 @@
-import { debuggerStates } from './debugger.state'
-
-
+import {debuggerStates} from './debugger.state'
 
 
 export const __debuggerGate = (evalOnDebugMode: () => void): void => {

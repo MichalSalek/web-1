@@ -1,6 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-
-
+import {NextApiRequest, NextApiResponse} from 'next'
 
 
 export type NextApiWithOptionalPayload<T = unknown> = {

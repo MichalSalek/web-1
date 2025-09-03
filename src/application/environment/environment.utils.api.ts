@@ -1,7 +1,5 @@
-import { isStringTypeNarrower } from '@msalek/utils'
-import { RAW_ENV_VARS_NOT_USE } from './environment.config'
-
-
+import {isStringTypeNarrower} from '@msalek/utils'
+import {RAW_ENV_VARS_NOT_USE} from './environment.config'
 
 
 export const IS_DEVELOPMENT_ENV = (): boolean => process.env.NODE_ENV === 'development'

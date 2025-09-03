@@ -1,11 +1,9 @@
-import { __debuggerGate }                                       from '../../debugger/debugger.utils.api'
-import { reportIssue }                                          from '../../debugger/errorHandler.possibilities.api'
-import { ENV_VARS }                                             from '../../environment/environment.utils.api'
-import { JWT_VERIFY }                                           from './adapters/jsonwebtoken.adapter'
-import { TOKEN_WITH_SALT_SEPARATOR, TokenPayload }              from './jwt.config'
-import { ExtendedEncodedAndDecodedToken, ExtendedToken, Token } from './jwt.types'
-
-
+import {__debuggerGate} from '../../debugger/debugger.utils.api'
+import {reportIssue} from '../../debugger/errorHandler.possibilities.api'
+import {ENV_VARS} from '../../environment/environment.utils.api'
+import {JWT_VERIFY} from './adapters/jsonwebtoken.adapter'
+import {TOKEN_WITH_SALT_SEPARATOR, TokenPayload} from './jwt.config'
+import {ExtendedEncodedAndDecodedToken, ExtendedToken, Token} from './jwt.types'
 
 
 export const getFullSalt = (salt: string): string | undefined => {
@@ -35,11 +33,9 @@ export const validateTokenPayload = (payload: TokenPayload | unknown): payload i
   in payload
 
 
-
 export const extendEncodedToken = (encodedToken: Token, salt: string): ExtendedToken => {
   return encodedToken + TOKEN_WITH_SALT_SEPARATOR + salt
 }
-
 
 
 export const getEncodedTokenFromExtendedToken = (extendedToken: ExtendedToken): {
@@ -57,7 +53,7 @@ export const getEncodedTokenFromExtendedToken = (extendedToken: ExtendedToken): 
     encodedToken: cleanFromSeparator.substring(
       0,
       dividingLineNumber),
-    salt        : cleanFromSeparator.substring(dividingLineNumber)
+    salt: cleanFromSeparator.substring(dividingLineNumber)
   }
   __debuggerGate(() => console.log(
     'getEncodedTokenFromExtendedToken. type of encodedToken and salt: ',
@@ -67,19 +63,18 @@ export const getEncodedTokenFromExtendedToken = (extendedToken: ExtendedToken): 
 }
 
 
-
 const getDecodedTokenFromExtendedToken = (extendedToken: ExtendedToken): TokenPayload | undefined => {
   try {
     const {
-            encodedToken,
-            salt
-          } = getEncodedTokenFromExtendedToken(extendedToken)
+      encodedToken,
+      salt
+    } = getEncodedTokenFromExtendedToken(extendedToken)
     const decoded = JWT_VERIFY(
       encodedToken,
       salt)
     const decodedAndValidatedByModel = validateTokenPayload(decoded)
-                                       ? decoded
-                                       : undefined
+      ? decoded
+      : undefined
     if (!decodedAndValidatedByModel) {
       __debuggerGate(() => console.log(
         'getDecodedTokenFromExtendedToken validateTokenPayload FAIL. extendedToken: ',
@@ -94,7 +89,6 @@ const getDecodedTokenFromExtendedToken = (extendedToken: ExtendedToken): TokenPa
     throw error
   }
 }
-
 
 
 export const getDecodedTokenFromPassedExtended = (extendedToken: ExtendedToken): ExtendedEncodedAndDecodedToken => {

@@ -1,9 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { HTTPRequestHandlerMiddleware }         from '../../../../../domain/http/http.middleware'
-import { USER_DTO_API_V1 }                      from '../../../../../READONLY-shared-kernel/models/user/user.dto'
-import { VALIDATION_POLICY }                    from '../../../../../READONLY-shared-kernel/policies/validation.policy'
-
-
+import type {NextApiRequest, NextApiResponse} from 'next'
+import {HTTPRequestHandlerMiddleware} from '../../../../../domain/http/http.middleware'
+import {USER_DTO_API_V1} from '../../../../../READONLY-shared-kernel/models/user/user.dto'
+import {VALIDATION_POLICY} from '../../../../../READONLY-shared-kernel/policies/validation.policy'
 
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -11,10 +9,10 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     req,
     res,
     {
-      eventName         : 'USER_CREATE',
-      allowedHTTPMethod : 'post',
+      eventName: 'USER_CREATE',
+      allowedHTTPMethod: 'post',
       validationFunction: VALIDATION_POLICY.validators.userCreate,
-      businessLogic     : async (body) => {
+      businessLogic: async (body) => {
 
 
         // tworzenie nowego usera level 1
